@@ -14,14 +14,16 @@ class ImageTableViewCell: UITableViewCell {
   var workGetImage : DispatchWorkItem?
   var workApplyFilter : DispatchWorkItem?
   
+  var correctURL : URL?
+  
   
   override func prepareForReuse() {
     super.prepareForReuse()
-    
-    pictureImageView.image = nil
     workGetImage?.cancel()
     workApplyFilter?.cancel()
     
+    correctURL = nil
     
+    pictureImageView.image = nil 
   }
 }
