@@ -33,19 +33,16 @@ extension ViewController: UITableViewDataSource {
     
     var url : URL? = nil
     var data = Data()
-    
     var image = UIImage()
     
-    let workGetImage = DispatchWorkItem {
+    cell.workGetImage = DispatchWorkItem {
       url = self.imageURLArray[indexPath.row % self.imageURLArray.count]
       data = try! Data(contentsOf: url!)
       image = UIImage(data: data)!
     }
     
-    
-    
-    let workApplyFilter = DispatchWorkItem {
-      let inputImage = CIImage(data: UIImagePNGRepresentation(image)!)!
+    cell.workApplyFilter = DispatchWorkItem {
+      let inputImage = CIImage(data: UIImagePNGRepresentation(cell.pictureImageView.image!)!)!
       let filter = CIFilter(name: "CISepiaTone")!
       filter.setValue(inputImage, forKey: kCIInputImageKey)
       filter.setValue(0.8, forKey: kCIInputIntensityKey)
@@ -56,47 +53,15 @@ extension ViewController: UITableViewDataSource {
       
       DispatchQueue.main.async {
         cell.pictureImageView.image = UIImage(cgImage: imageRef)
-//          image = imageWithFilter
       }
-      
     }
     
-//    workApplyFilter.notify(queue: DispatchQueue.main){
-////      cell.pictureImageView.image = image
-//    }
-    
-    
-    workGetImage.notify(queue: DispatchQueue.main){
+    cell.workGetImage?.notify(queue: DispatchQueue.main){
       cell.pictureImageView.image = image
-      DispatchQueue.global().async(execute : workApplyFilter)
+      DispatchQueue.global().async(execute : cell.workApplyFilter!)
     }
     
-    DispatchQueue.global().async(execute : workGetImage)
-    
-    
-    
-    //TODO: Get the image Asyc
-    
-    //If the image is still around then apply the filter
-    
-    // TODO: add sepia filter to image
-    //    DispatchQueue.global().async {
-    //
-    //      //Do the intensive task - filtering
-    //      let inputImage = CIImage(data: UIImagePNGRepresentation(image!)!)
-    //      let filter = CIFilter(name: "CISepiaTone")!
-    //      filter.setValue(inputImage, forKey: kCIInputImageKey)
-    //      filter.setValue(0.8, forKey: kCIInputIntensityKey)
-    //      let outputCIImage = filter.outputImage
-    //      let imageWithFilter = UIImage(ciImage: outputCIImage!)
-    //
-    //
-    //      DispatchQueue.main.async {
-    //        cell.pictureImageView.image = imageWithFilter
-    //      }
-    //    }
-    
-    
+    DispatchQueue.global().async(execute : cell.workGetImage!)
     
     return cell
   }

@@ -9,12 +9,19 @@
 import UIKit
 
 class ImageTableViewCell: UITableViewCell {
+  
+  @IBOutlet weak var pictureImageView: UIImageView!
+  var workGetImage : DispatchWorkItem?
+  var workApplyFilter : DispatchWorkItem?
+  
+  
+  override func prepareForReuse() {
+    super.prepareForReuse()
     
-    @IBOutlet weak var pictureImageView: UIImageView!
+    pictureImageView.image = nil
+    workGetImage?.cancel()
+    workApplyFilter?.cancel()
     
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        
-        pictureImageView.image = nil
-    }
+    
+  }
 }
